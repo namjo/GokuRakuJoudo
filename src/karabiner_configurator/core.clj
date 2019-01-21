@@ -11,6 +11,7 @@
    [karabiner-configurator.froms :as froms]
    [karabiner-configurator.tos :as tos]
    [karabiner-configurator.rules :as rules]
+   [karabiner-configurator.profiles :as profiles]
    [clojure.edn :as edn]
    [me.raynes.fs :as fs]
    [clojure.tools.cli :as cli]
@@ -26,7 +27,10 @@
 (defn generate
   "generate configuration"
   [conf]
-  (let [{:keys [applications devices keyboard-type input-sources tos froms modifiers layers simlayers raws main simlayer-threshold templates]} conf]
+  (let [{:keys [applications devices keyboard-type input-sources tos froms modifiers layers simlayers raws main simlayer-threshold templates profiles]} conf]
+    (if (nil? profiles)
+      (profiles/parse-profiles default-profile)
+      (profiles/parse-profiles profiles))
     (update-static-conf :applications applications)
     (update-static-conf :devices devices)
     (update-static-conf :keyboard-type keyboard-type)

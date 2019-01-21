@@ -3,10 +3,27 @@
    [karabiner-configurator.keys-info :refer :all]
    [karabiner-configurator.misc :refer :all]))
 
+(declare rule-id)
+
+(defn init-rule-id []
+  (def rule-id -1))
+
+(defn next-rule-id
+  "return the next rule id
+
+   store each rule in a vector and use the index as their id
+   the data structure will also store conditions used in the rule
+   so that we know what condition used in each profile"
+  []
+  (def rule-id (inc rule-id))
+  rule-id)
+
 (declare conf-data)
 (defn init-conf-data
   []
-  (def conf-data {:applications {}
+  (init-rule-id)
+  (def conf-data {:profiles {}
+                  :applications {}
                   :devices {}
                   :input-sources {}
                   :modifiers {}
@@ -28,6 +45,22 @@
         (contains? (:templates conf-data) k-or-vec)
         (vector? k-or-vec)
         (contains? (:templates conf-data) (first k-or-vec))))
+
+(def goku-default-profile {:Default {:default true
+                                     :sim 50
+                                     :delay 500
+                                     :alone 1000
+                                     :held 500}})
+
+(declare default-profile)
+
+(def update-default-profile [profile]
+  (massert
+   (keyword? profile)
+   (str
+    "Invalid profile "
+    profile
+    ", profile must be a keyword.")))
 
 (defn k?
   [k]
